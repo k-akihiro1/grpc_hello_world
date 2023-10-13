@@ -1,21 +1,13 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"grpc_hello_world/hello"
+	"grpc_hello_world/service"
 	"net"
 
 	"google.golang.org/grpc"
 )
-
-type server struct {
-	hello.UnimplementedHelloServiceServer
-}
-
-func (s *server) Hello(ctx context.Context, in *hello.HelloRequest) (*hello.HelloResponse, error) {
-	return &hello.HelloResponse{Message: "Hello " + in.Name + "!"}, nil
-}
 
 func main() {
 	lis, err := net.Listen("tcp", ":50051")
@@ -24,7 +16,7 @@ func main() {
 	}
 
 	s := grpc.NewServer()
-	hello.RegisterHelloServiceServer(s, &server{})
+	hello.RegisterHelloServiceServer(s, &service.HelloService{})
 
 	fmt.Println("Server started...")
 	if err := s.Serve(lis); err != nil {
